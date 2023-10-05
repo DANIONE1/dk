@@ -1,34 +1,21 @@
 pipeline {
     agent any
     stages {
-        stage('Checkout') {
+        stage('Source Code') {
             steps {
                 checkout scm
             }
         }
-        stage('Build Docker Image') {
+        stage('Docker Image') {
             steps {
                 script {
                     try {
-                        sh 'docker build -t mypythonapp .'
+                        sh 'docker build -t myJenkins .'
+                        sh 'docker stop python-Jenkins || true'
+                        sh 'docker rm python-Jenkins || true'
+                        sh 'docker run -d -p 5000:5000 --name=python-Jenkins myJenkins'
                     } catch (Exception e) {
-                        sh 'docker logs pythonapp'
-                        throw e
-                    }
-                }
-            }
-        }
-        stage('Run Docker Container') {
-            steps {
-                script {
-                    try {
-                        sh '''
-                        docker stop pythonapp || true
-                        docker rm pythonapp || true
-                        docker run -d -p 5000:5000 --name=pythonapp mypythonapp
-                        '''
-                    } catch (Exception e) {
-                        sh 'docker logs pythonapp'
+                        sh 'docker logs python-Jenkins'
                         throw e
                     }
                 }
@@ -37,7 +24,7 @@ pipeline {
     }
     post {
         always {
-            sh "docker rm -f pythonapp || true"
+            sh "docker rm -f python-Jenkins || true"
         }
     }
 }
