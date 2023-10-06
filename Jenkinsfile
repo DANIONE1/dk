@@ -10,9 +10,9 @@ pipeline {
             steps {
                 script {
                     try {
-                        sh 'docker build -t mypythonapp .'
+                        sh 'sudo docker build -t mypythonapp .'
                     } catch (Exception e) {
-                        sh 'docker logs pythonapp'
+                        sh 'sudo docker logs pythonapp'
                         throw e
                     }
                 }
@@ -23,12 +23,12 @@ pipeline {
                 script {
                     try {
                         sh '''
-                        docker stop pythonapp || true
-                        docker rm pythonapp || true
-                        docker run -d -p 5000:5000 --name=pythonapp mypythonapp
+                        sudo docker stop pythonapp || true
+                        sudo docker rm pythonapp || true
+                        sudo docker run -d -p 5000:5000 --name=pythonapp mypythonapp
                         '''
                     } catch (Exception e) {
-                        sh 'docker logs pythonapp'
+                        sh 'sudo docker logs pythonapp'
                         throw e
                     }
                 }
@@ -37,7 +37,7 @@ pipeline {
     }
     post {
         always {
-            sh "docker rm -f pythonapp || true"
+            sh "sudo docker rm -f pythonapp || true"
         }
     }
 }
