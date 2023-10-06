@@ -1,10 +1,8 @@
-FROM python:3.9-slim
+FROM node:latest
 
-WORKDIR /myjenapp
+WORKDIR /usr/src/app
 
-COPY requirements_appJenk.txt requirements.txt
-
-RUN pip install -r requirements.txt
+COPY requirements.txt requirements.txt
 
 COPY . .
 
