@@ -2,7 +2,6 @@ pipeline {
     agent any
     environment {
         PATH = "/usr/local/bin:$PATH"
-        GIT_EXECUTABLE = '/usr/bin/git'
     }
     stages {
         stage('Checkout') {
