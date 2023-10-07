@@ -6,15 +6,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                script {
-                    try {
-                        sh "${GIT_EXECUTABLE} clone https://github.com/DANIONE1/dk.git"
-                    } catch (Exception e) {
-                        echo "Error al clonar el repositorio: ${e.message}"
-                        currentBuild.result = 'FAILURE'
-                        error('Failed to clone the repository')
-                    }
-                }
+                checkout scm
             }
         }
         stage('Build Docker Image') {
