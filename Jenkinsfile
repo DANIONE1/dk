@@ -1,46 +1,29 @@
 pipeline {
     agent any
     environment {
-        PATH = "/usr/local/bin:$PATH"
+        GIT_EXECUTABLE = '/usr/bin/git'
     }
     stages {
         stage('Checkout') {
             steps {
-                checkout scm
-            }
-        }
-        stage('Build Docker Image') {
-            steps {
                 script {
                     try {
-                        sh 'docker build -t mypythonapp .'
+                        sh "${GIT_EXECUTABLE} clone https://github.com/DANIONE1/dk.git"
                     } catch (Exception e) {
-                        sh 'docker logs pythonapp'
-                        throw e
+                        echo "Error al clonar el repositorio: ${e.message}"
+                        currentBuild.result = 'FAILURE'
+                        error('Failed to clone the repository')
                     }
                 }
             }
         }
-        stage('Run Docker Container') {
-            steps {
-                script {
-                    try {
-                        sh '''
-                        docker stop pythonapp || true
-                        docker rm pythonapp || true
-                        docker run -d -p 5000:5000 --name=pythonapp mypythonapp
-                        '''
-                    } catch (Exception e) {
-                        sh 'docker logs pythonapp'
-                        throw e
-                    }
-                }
-            }
-        }
+        // ...
+        // Otras etapas de tu canalización
+        // ...
     }
     post {
         always {
-            sh "docker rm -f pythonapp || true"
+            sh "rm -rf dk"
         }
     }
 }
